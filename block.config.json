@@ -1,0 +1,15 @@
+{
+  "name": "chatbot_admin",
+  "type": "raw-package",
+  "blockId": "v9WLuuYLIdin1ssKn808y",
+  "source": {
+    "https": null,
+    "ssh": null,
+    "branch": "block_chatbot_admin"
+  },
+  "parentBlockIDs": [],
+  "isPublic": true,
+  "supportedAppblockVersions": ["1.0.0"],
+  "repoType": "mono",
+  "language": "nodejs"
+}

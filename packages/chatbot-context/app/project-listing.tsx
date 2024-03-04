@@ -36,7 +36,7 @@ const ProjectListing = () => {
           <input
             type="text"
             className="search-input-white border-ab-gray-dark text-ab-black h-9 w-full rounded-md border !bg-[length:14px_auto] px-2 pl-8 text-sm focus:outline-none"
-            placeholder="Search Space"
+            placeholder="Search Project"
           />
         </div>
         <Link

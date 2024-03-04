@@ -121,7 +121,7 @@ export async function POST(request: Request) {
     }
 
     projectData = await utils.prisma.project.findMany({
-      whereObject,
+     where: whereObject,
     });
 
     if (body?.context_status === 1) {

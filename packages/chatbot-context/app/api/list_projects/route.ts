@@ -54,7 +54,7 @@ import utils from "../../../utils/index.js";
  *                     type: string
  *                    category:
  *                     type: string
- *                    created_at: 
+ *                    created_at:
  *                     type: string
  *                    updated_at:
  *                     type: string
@@ -103,12 +103,25 @@ export async function POST(request: Request) {
     // let project:any = await checkUserAccess(collectionName, user.id);
 
     let projectData: any;
+    let whereObject: any;
+
+    whereObject = {
+      user_id: user.id,
+      status: 1,
+    };
+
+    if (body.search_string.length > 0) {
+      whereObject = {
+        ...whereObject,
+        name: {
+          contains: body.search_string,
+          mode: "insensitive",
+        },
+      };
+    }
 
     projectData = await utils.prisma.project.findMany({
-      where: {
-        user_id: user.id,
-        status: 1,
-      },
+      whereObject,
     });
 
     if (body?.context_status === 1) {
@@ -117,17 +130,18 @@ export async function POST(request: Request) {
 
       let existingCollectionsMap: any = {};
 
-      await Promise.all(existingCollections.map(async (item: any) => {
-        const result = await qdrantClient.getCollection(item.name);
-        if (result?.vectors_count > 0) {
-          existingCollectionsMap[`${item.name}`] = true;
-        }
-      }))
+      await Promise.all(
+        existingCollections.map(async (item: any) => {
+          const result = await qdrantClient.getCollection(item.name);
+          if (result?.vectors_count > 0) {
+            existingCollectionsMap[`${item.name}`] = true;
+          }
+        })
+      );
 
       let progressProjects = await projectData.filter((item: any) => {
-       return !existingCollectionsMap[item.collection_name]
+        return !existingCollectionsMap[item.collection_name];
       });
-
 
       return NextResponse.json({
         msg: "Projects in progress listed for the user",
@@ -137,20 +151,22 @@ export async function POST(request: Request) {
 
     if (body?.context_status === 2) {
       let existingCollections = (await qdrantClient.getCollections())
-      .collections;
+        .collections;
 
-    let existingCollectionsMap: any = {};
+      let existingCollectionsMap: any = {};
 
-    await Promise.all(existingCollections.map(async (item: any) => {
-      const result = await qdrantClient.getCollection(item.name);
-      if (result?.vectors_count > 0) {
-        existingCollectionsMap[`${item.name}`] = true;
-      }
-    }))
+      await Promise.all(
+        existingCollections.map(async (item: any) => {
+          const result = await qdrantClient.getCollection(item.name);
+          if (result?.vectors_count > 0) {
+            existingCollectionsMap[`${item.name}`] = true;
+          }
+        })
+      );
 
-    let completedProjects = await projectData.filter((item: any) => {
-     return existingCollectionsMap[item.collection_name]
-    });
+      let completedProjects = await projectData.filter((item: any) => {
+        return existingCollectionsMap[item.collection_name];
+      });
 
       return NextResponse.json({
         msg: "Usable projects listed for the user",

@@ -135,7 +135,6 @@ export async function POST(request: NextRequest) {
     const docs = await loader.load();
 
 
-    // writeFileSync("test.json",JSON.stringify(docs))
 
     // const splitter = new RecursiveCharacterTextSplitter({
     //   chunkSize: 1000,

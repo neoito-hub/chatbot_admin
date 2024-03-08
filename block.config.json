@@ -9,7 +9,11 @@
   },
   "parentBlockIDs": [],
   "isPublic": true,
-  "supportedAppblockVersions": ["1.0.0"],
+  "supportedAppblockVersions": [
+    "1.0.0"
+  ],
   "repoType": "mono",
-  "language": "nodejs"
+  "language": "nodejs",
+  "dependencies": {},
+  "version": "0.0.2"
 }

@@ -11,6 +11,9 @@ function validateProjectInput(data) {
     : "";
   data.category = !utils.isEmpty(data.category) ? data.category : "";
   data.domains = data?.domains ?? [];
+  data.search_string = !utils.isEmpty(data.search_string)
+  ? data.search_string
+  : "";
 
   if (Validator.isEmpty(data.project_name)) {
     errors.project_name = "Proejct name field is required";

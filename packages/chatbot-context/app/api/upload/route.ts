@@ -94,8 +94,6 @@ export async function POST(request: Request) {
 
     const docOutput = await splitter.splitDocuments(docs);
 
-    writeFileSync("test.json", JSON.stringify(docs));
-
     const vectorStore = getVectorStore(project.project.collection_name);
     await vectorStore.addDocuments(docOutput);
 

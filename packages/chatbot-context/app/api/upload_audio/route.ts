@@ -137,7 +137,6 @@ export async function POST(request: NextRequest) {
       await vectorStore.addDocuments(docs);
     }
 
-    // writeFileSync("test.json",JSON.stringify(docs))
 
     // const splitter = new RecursiveCharacterTextSplitter({
     //   chunkSize: 1000,

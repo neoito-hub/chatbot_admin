@@ -4,8 +4,8 @@ WORKDIR $home/app
 
 # Copy only the package files to leverage Docker caching
 COPY ./package.json ./
-COPY ./pnpm-lock.yaml ./
-COPY ./ecosystem.config.js ./
+# COPY ./pnpm-lock.yaml ./
+# COPY ./ecosystem.config.js ./
 COPY ./utils/prisma/schema.prisma ./
 
 # Install global packages

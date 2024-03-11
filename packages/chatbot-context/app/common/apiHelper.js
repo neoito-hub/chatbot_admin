@@ -23,6 +23,7 @@ const apiHelper = async ({
     return data;
   } catch (err) {
     console.log("msg", err);
+    alert(err.message);
     // if (err.response.status === 401) shield.logout();
   }
 };

@@ -9,7 +9,11 @@ import validateUser from "../../../utils/validation/validateUser.js";
 import { hostname } from "os";
 import { writeFileSync } from "fs";
 import utils from "../../../utils/index.js";
-import { addDocumentsToVectorStore, splitDocuments } from "@/utils/vectorStore.ts";
+import {
+  addDocumentsToVectorStore,
+  splitDocuments,
+} from "@/utils/vectorStore.ts";
+import { error } from "console";
 
 /**
  * @swagger
@@ -87,9 +91,7 @@ export async function POST(request: Request) {
 
     const docs = await loader.load();
 
-    const docOutput = await splitDocuments(docs)
-
-    console.log("doc output is \n",docOutput)
+    const docOutput = await splitDocuments(docs);
 
     const vectorStore = getVectorStore(project.project.collection_name);
 

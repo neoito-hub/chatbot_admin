@@ -9,6 +9,10 @@ import { mkdirSync, rmSync, statSync } from "fs";
 import { checkUserAccess } from "@/utils/checkAccess";
 import validateUser from "../../../utils/validation/validateUser.js";
 import utils from "../../../utils/index.js";
+import {
+  addDocumentsToVectorStore,
+  splitDocuments,
+} from "@/utils/vectorStore.ts";
 
 /**
  * @swagger
@@ -21,7 +25,7 @@ import utils from "../../../utils/index.js";
  *        name: projectName
  *        schema:
  *         type: string
- *        required: true  
+ *        required: true
  *     requestBody:
  *       required: true
  *       content:
@@ -43,7 +47,7 @@ import utils from "../../../utils/index.js";
  *                  msg:
  *                   type: string
  *                   example: Github repo context added to model
- *                  
+ *
  *         description: Ok
  *       400:
  *        content:
@@ -85,12 +89,11 @@ export async function POST(request: Request) {
     const { searchParams } = new URL(request.url);
     const projectID = searchParams.get("project_id") as string;
     if (!projectID) {
-     return Response.json(
-       { success: false, message: "Param project id not found" },
-       { status: 400 }
-     );
-   }
-
+      return Response.json(
+        { success: false, message: "Param project id not found" },
+        { status: 400 }
+      );
+    }
 
     let user: any = await utils.validateUser(request);
     let project: any = await checkUserAccess(projectID, user.id);
@@ -136,57 +139,16 @@ export async function POST(request: Request) {
       });
     }
 
-
-    // await model.sequelize.transaction(async (t:any) => {
-    //   const [existingUrl, created] = await model.scraping_logs.findOrCreate({
-    //     where: { url: url },
-    //     defaults: {
-    //       url:url,
-    //       status: 2,
-    //     },
-    //     transaction: t,
-    //   });
-
-    //   if(existingUrl){
-    //       return NextResponse.json({
-    //           msg: "url context added to model",
-    //         });
-    //   }
-
-    // const loader = new GithubRepoLoader(url, {
-    //   branch: branchName,
-    //   recursive: true,
-    //   unknown: "warn",
-    //   maxConcurrency: 10000,
-    //   ignorePaths: ["*.json", "*.js", "*.ts", "*.css", "*.lock", "*.svg"],
-    // });
-    // const docs = await loader.load();
-
-    // const docs = [];
-    // for await (const doc of loader.loadAsStream()) {
-    //   console.log("pushed doc")
-    //   docs.push(doc);
-    // }
-
-    const splitter = new RecursiveCharacterTextSplitter({
-      chunkSize: 1000,
-      chunkOverlap: 20,
-    });
-
-    const docOutput = await splitter.splitDocuments(docs);
-
-    console.log("docs length is", docOutput.length);
+    const docOutput = await splitDocuments(docs);
 
 
     const vectorStore = getVectorStore(project.project.collection_name);
-    await vectorStore.addDocuments(docOutput);
-
+    await addDocumentsToVectorStore(docOutput, vectorStore);
     rmSync(uploadDirectory, { recursive: true, force: true });
 
     return NextResponse.json({
       msg: "Github repo context added to model",
     });
-    // })
   } catch (e: any) {
     console.log("error is \n", e);
 

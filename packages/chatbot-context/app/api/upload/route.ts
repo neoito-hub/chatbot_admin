@@ -2,7 +2,6 @@ import { NextResponse } from "next/server";
 import { getVectorStore, qdrantClient } from "@/utils/chain";
 
 import { RecursiveUrlLoader } from "langchain/document_loaders/web/recursive_url";
-import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
 import { compile } from "html-to-text";
 import { useSearchParams } from "react-router-dom";
 import { checkUserAccess } from "@/utils/checkAccess";
@@ -10,6 +9,11 @@ import validateUser from "../../../utils/validation/validateUser.js";
 import { hostname } from "os";
 import { writeFileSync } from "fs";
 import utils from "../../../utils/index.js";
+import {
+  addDocumentsToVectorStore,
+  splitDocuments,
+} from "@/utils/vectorStore.ts";
+import { error } from "console";
 
 /**
  * @swagger
@@ -87,15 +91,11 @@ export async function POST(request: Request) {
 
     const docs = await loader.load();
 
-    const splitter = new RecursiveCharacterTextSplitter({
-      chunkSize: 1000,
-      chunkOverlap: 20,
-    });
-
-    const docOutput = await splitter.splitDocuments(docs);
+    const docOutput = await splitDocuments(docs);
 
     const vectorStore = getVectorStore(project.project.collection_name);
-    await vectorStore.addDocuments(docOutput);
+
+    await addDocumentsToVectorStore(docOutput, vectorStore);
 
     return NextResponse.json({
       msg: "url context added to model",

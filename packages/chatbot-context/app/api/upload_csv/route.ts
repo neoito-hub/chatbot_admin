@@ -12,6 +12,7 @@ import { join } from "path";
 import { checkUserAccess } from "@/utils/checkAccess";
 import validateUser from "../../../utils/validation/validateUser.js";
 import utils from "../../../utils/index.js";
+import { addDocumentsToVectorStore, splitDocuments } from "@/utils/vectorStore";
 
 // import { parseForm,  } from "../../../lib/parse-from";
 
@@ -133,10 +134,10 @@ export async function POST(request: NextRequest) {
     });
     const docs = await loader.load();
 
-
+    const docOutput=await splitDocuments(docs)
 
     const vectorStore = getVectorStore(project.project.collection_name);
-    await vectorStore.addDocuments(docs);
+    await addDocumentsToVectorStore(docOutput,vectorStore)
 
     rmSync(uploadDir, { recursive: true, force: true });
 

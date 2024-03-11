@@ -1,21 +1,29 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import URLUpload from "./url-upload";
 import FileUpload from "./file-upload";
 import YtUrlUpload from "./yt-url-upload";
 import AudioUpload from "./audio-upload";
+import GithubUpload from "./github-upload";
+import CSVUpload from "./csv-upload";
 import Configure from "../page";
+import Loader from "./loader";
 
 export default function DataSource() {
-  const [selectedTab, setSelectedTab] = useState("url");
+  const [selectedTab, setSelectedTab] = useState("github-url");
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   const [loading, setLoading] = useState<boolean>(false);
 
   return (
     <Configure>
-      <div className="flex flex-col">
-        <div className="flex gap-10">
-          <div className="my-4 flex items-center">
+      <Loader loading={loading} />
+      <div
+        className={`flex flex-col ${
+          loading ? "opacity-40 pointer-events-none" : ""
+        }`}
+      >
+        <div className="flex gap-7">
+          <div className="my-2 flex items-center">
             <label className="float-left flex items-center">
               <input
                 name="url"
@@ -30,14 +38,14 @@ export default function DataSource() {
                 type="checkbox"
               />
               <span
-                className={`chkbox-icon border-ab-disabled chkbox-icon float-left mr-2 h-5 w-5 flex-shrink-0 cursor-pointer rounded border bg-white`}
+                className={`chkbox-icon border-ab-disabled float-left mr-2 h-5 w-5 flex-shrink-0 cursor-pointer rounded border bg-white`}
               />
             </label>
             <p className="text-xs tracking-tight text-black font-semibold">
               Website URL
             </p>
           </div>
-          <div className="my-4 flex items-center">
+          <div className="my-2 flex items-center">
             <label className="float-left flex items-center">
               <input
                 name="yt-url"
@@ -52,11 +60,33 @@ export default function DataSource() {
                 type="checkbox"
               />
               <span
-                className={`chkbox-icon border-ab-disabled chkbox-icon float-left mr-2 h-5 w-5 flex-shrink-0 cursor-pointer rounded border bg-white`}
+                className={`chkbox-icon border-ab-disabled float-left mr-2 h-5 w-5 flex-shrink-0 cursor-pointer rounded border bg-white`}
               />
             </label>
             <p className="text-xs tracking-tight text-black font-semibold">
               Youtube URL
+            </p>
+          </div>
+          <div className="my-2 flex items-center">
+            <label className="float-left flex items-center">
+              <input
+                name="github-url"
+                value={"github-url"}
+                disabled={loading}
+                checked={selectedTab === "github-url"}
+                onChange={() => {
+                  setSelectedTab("github-url");
+                  setShowSuccessMessage(false);
+                }}
+                className="peer hidden"
+                type="checkbox"
+              />
+              <span
+                className={`chkbox-icon border-ab-disabled float-left mr-2 h-5 w-5 flex-shrink-0 cursor-pointer rounded border bg-white`}
+              />
+            </label>
+            <p className="text-xs tracking-tight text-black font-semibold">
+              Github URL
             </p>
           </div>
           <div className="my-2 flex items-center">
@@ -79,6 +109,28 @@ export default function DataSource() {
             </label>
             <p className="text-xs tracking-tight text-black font-semibold">
               File Upload
+            </p>
+          </div>
+          <div className="my-2 flex items-center">
+            <label className="float-left flex items-center">
+              <input
+                name="csv"
+                value={"csv"}
+                disabled={loading}
+                checked={selectedTab === "csv"}
+                onChange={() => {
+                  setSelectedTab("csv");
+                  setShowSuccessMessage(false);
+                }}
+                className="peer hidden"
+                type="checkbox"
+              />
+              <span
+                className={`chkbox-icon border-ab-disabled float-left mr-2 h-5 w-5 flex-shrink-0 cursor-pointer rounded border bg-white`}
+              />
+            </label>
+            <p className="text-xs tracking-tight text-black font-semibold">
+              CSV Upload
             </p>
           </div>
           <div className="my-2 flex items-center">
@@ -124,8 +176,22 @@ export default function DataSource() {
               loading={loading}
             />
           )}
+          {!showSuccessMessage && selectedTab === "github-url" && (
+            <GithubUpload
+              handleSuccessMessagePage={() => setShowSuccessMessage(true)}
+              handleLoading={(input: boolean) => setLoading(input)}
+              loading={loading}
+            />
+          )}
           {!showSuccessMessage && selectedTab === "file" && (
             <FileUpload
+              handleSuccessMessagePage={() => setShowSuccessMessage(true)}
+              handleLoading={(input: boolean) => setLoading(input)}
+              loading={loading}
+            />
+          )}
+          {!showSuccessMessage && selectedTab === "csv" && (
+            <CSVUpload
               handleSuccessMessagePage={() => setShowSuccessMessage(true)}
               handleLoading={(input: boolean) => setLoading(input)}
               loading={loading}
@@ -140,7 +206,6 @@ export default function DataSource() {
           )}
         </div>
       </div>
-      {/* )} */}
     </Configure>
   );
 }

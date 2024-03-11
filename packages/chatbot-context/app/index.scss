@@ -191,8 +191,8 @@ input.peer:checked + .filter-radio {
 }
 
 input.peer:checked + .chkbox-icon {
-  background: url("./assets/img/icons/tick.svg") no-repeat center center #5e5edd;
+  background: url("/assets/img/icons/tick.svg") no-repeat center center #5e5edd;
 }
 input.peer:checked + .no-bg-chkbox {
-  background: url("./assets/img/icons/tick-black.svg") no-repeat center center;
+  background: url("/assets/img/icons/tick-black.svg") no-repeat center center;
 }

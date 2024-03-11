@@ -4,6 +4,8 @@
 .deployed.config.json
 headless-config.json
 
+packages/chatbot-context/uploads
+
 # Logs
 logs
 *.log

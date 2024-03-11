@@ -12,6 +12,7 @@ import { checkUserAccess } from "@/utils/checkAccess";
 import utils from "../../../utils/index.js";
 
 import validateUser from "../../../utils/validation/validateUser.js";
+import { addDocumentsToVectorStore, splitDocuments } from "@/utils/vectorStore";
 // import { parseForm,  } from "../../../lib/parse-from";
 
 /**
@@ -25,14 +26,14 @@ import validateUser from "../../../utils/validation/validateUser.js";
  *       name: projectName
  *       schema:
  *         type: string
- *       required: true  
+ *       required: true
  *   requestBody:
  *     content:
  *       multipart/form-data:
  *         schema:
  *           type: object
  *           required:
-  *             - file1
+ *             - file1
  *           properties:
  *             file1:
  *               type: string
@@ -87,12 +88,11 @@ export async function POST(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const projectID = searchParams.get("project_id") as string;
     if (!projectID) {
-     return Response.json(
-       { success: false, message: "Param project id not found" },
-       { status: 400 }
-     );
-   }
-
+      return Response.json(
+        { success: false, message: "Param project id not found" },
+        { status: 400 }
+      );
+    }
 
     let user: any = await utils.validateUser(request);
     let project: any = await checkUserAccess(projectID, user.id);
@@ -134,18 +134,10 @@ export async function POST(request: NextRequest) {
     });
     const docs = await loader.load();
 
+    const docOutput = await splitDocuments(docs);
 
-
-    // const splitter = new RecursiveCharacterTextSplitter({
-    //   chunkSize: 1000,
-    //   chunkOverlap: 20,
-    // });
-
-    // const docOutput = await splitter.splitDocuments(docs);
-
-    // console.log("doc output after splitting  is", docOutput.length);
     const vectorStore = getVectorStore(project.project.collection_name);
-    await vectorStore.addDocuments(docs);
+    await addDocumentsToVectorStore(docOutput, vectorStore);
 
     rmSync(uploadDir, { recursive: true, force: true });
 

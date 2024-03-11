@@ -5,6 +5,7 @@ import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
 import { checkUserAccess } from "@/utils/checkAccess";
 import validateUser from "../../../utils/validation/validateUser.js";
 import utils from "../../../utils/index.js";
+import { addDocumentsToVectorStore, splitDocuments } from "@/utils/vectorStore";
 
 /**
  * @swagger
@@ -89,22 +90,14 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "UnAuthorised" }, { status: 403 });
     }
 
-    const loader = YoutubeLoader.createFromUrl(body.url, {
-      language: "en",
-      addVideoInfo: true,
-    });
+    const loader = YoutubeLoader.createFromUrl(body.url, {});
 
     const docs = await loader.load();
 
-    const splitter = new RecursiveCharacterTextSplitter({
-      chunkSize: 1000,
-      chunkOverlap: 20,
-    });
-
-    const docOutput = await splitter.splitDocuments(docs);
+    const docOutput = await splitDocuments(docs);
 
     const vectorStore = getVectorStore(project.project.collection_name);
-    await vectorStore.addDocuments(docs);
+    await addDocumentsToVectorStore(docOutput, vectorStore);
 
     return NextResponse.json({
       msg: "Youtube url context added to model",

@@ -7,15 +7,18 @@ import Link from "next/link";
 // import ChatIcon from "../app/assets/img/icons/chat.svg";
 // import LogIcon from "../app/assets/img/icons/log.svg";
 import apiHelper from "./common/apiHelper";
+import Loader from "./common/loader";
 
 const ChatBotList = ({ tabActive }: any) => {
   const getProjectListApiUrl = "api/list_projects";
 
   const [searchText, setSearchText] = useState("");
   const [projectList, setProjectList] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     (async () => {
+      setLoading(true);
       const res = await apiHelper({
         baseUrl: process.env.BACKEND_BASE_URL,
         subUrl: getProjectListApiUrl,
@@ -25,6 +28,7 @@ const ChatBotList = ({ tabActive }: any) => {
         },
         apiType: "post",
       });
+      setLoading(false);
       setProjectList(res?.data?.projects);
     })();
   }, [searchText]);
@@ -42,6 +46,7 @@ const ChatBotList = ({ tabActive }: any) => {
 
   return (
     <>
+      <Loader loading={loading} />
       <div className="bg-ab-black-medium float-left mt-5 flex w-full justify-between space-x-3">
         <div className="float-left flex-grow overflow-hidden">
           <input
@@ -75,6 +80,11 @@ const ChatBotList = ({ tabActive }: any) => {
       </div>
       <div className="float-left w-full overflow-x-hidden py-3 mt-2">
         <div className="float-left w-full">
+          {!loading && !projectList.length && (
+            <p className="text-ab-black float-left w-full py-10 text-center text-sm">
+              No Projects Found!
+            </p>
+          )}
           <div className="grid grid-cols-3 gap-3">
             {projectList?.map((project: any) => (
               <Link

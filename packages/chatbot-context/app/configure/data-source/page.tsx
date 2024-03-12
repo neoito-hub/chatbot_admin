@@ -7,10 +7,10 @@ import AudioUpload from "./audio-upload";
 import GithubUpload from "./github-upload";
 import CSVUpload from "./csv-upload";
 import Configure from "../page";
-import Loader from "./loader";
+import Loader from "../../common/loader";
 
 export default function DataSource() {
-  const [selectedTab, setSelectedTab] = useState("github-url");
+  const [selectedTab, setSelectedTab] = useState("url");
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   const [loading, setLoading] = useState<boolean>(false);
 

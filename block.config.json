@@ -1,6 +1,6 @@
 {
   "name": "chatbot_admin",
-  "type": "raw-package",
+  "type": "containerized",
   "blockId": "v9WLuuYLIdin1ssKn808y",
   "source": {
     "https": "https://github.com/neoito-hub/chatbot_admin.git",
